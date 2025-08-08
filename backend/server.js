@@ -16,16 +16,15 @@ let server = null;
 let io = null;
 
 // -----------------------------
-// Allowed frontend URLs (env + defaults)
+// Allowed frontend URLs
 // -----------------------------
 const CLIENT_URLS = [
-  process.env.CLIENT_URL, // e.g. https://neuro-chat.vercel.app
-  'http://localhost:3000',
-  'http://127.0.0.1:3000'
+  process.env.CLIENT_URL || 'https://neuro-chat-rho.vercel.app', // ✅ Your Vercel frontend
+  'http://localhost:3000'
 ].filter(Boolean);
 
 // -----------------------------
-// Debug log for incoming requests (helps CORS debugging)
+// Debug log for CORS
 // -----------------------------
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.url} | Origin: ${req.header('Origin') || 'N/A'}`);
@@ -120,7 +119,7 @@ function createServerInstance() {
 }
 
 // -----------------------------
-// Start Server (no port scanning in production)
+// Start Server
 // -----------------------------
 const PORT = process.env.PORT || 5000;
 const { s, socket } = createServerInstance();
