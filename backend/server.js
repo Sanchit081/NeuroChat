@@ -19,8 +19,9 @@ let io = null;
 // Allowed frontend URLs
 // -----------------------------
 const CLIENT_URLS = [
-  process.env.CLIENT_URL || 'https://neuro-chat-rho.vercel.app', // ✅ Your Vercel frontend
-  'http://localhost:3000'
+  process.env.CLIENT_URL,                  // From Render env vars
+  'neuro-chat-rho.vercel.app',             // Production Vercel domain (no protocol for matching)
+  'localhost:3000'                         // Local dev
 ].filter(Boolean);
 
 // -----------------------------
@@ -36,7 +37,7 @@ app.use((req, res, next) => {
 // -----------------------------
 app.use((req, res, next) => {
   const origin = req.header('Origin');
-  if (origin && CLIENT_URLS.some(url => origin.startsWith(url))) {
+  if (origin && CLIENT_URLS.some(url => origin.includes(url))) {
     res.header('Access-Control-Allow-Origin', origin);
   } else if (origin) {
     console.warn(`❌ Blocked CORS origin: ${origin}`);
@@ -106,14 +107,19 @@ function createServerInstance() {
 
   const socket = socketIo(s, {
     cors: {
-      origin: CLIENT_URLS,
+      origin: (origin, callback) => {
+        if (!origin || CLIENT_URLS.some(url => origin.includes(url))) {
+          return callback(null, true);
+        }
+        return callback(new Error(`❌ Not allowed by CORS: ${origin}`));
+      },
       credentials: true,
       methods: ['GET', 'POST'],
     }
   });
 
   socket.use(authenticateSocket);
-  socket.on('connection', handleConnection(socket));
+  socket.on('connection', (clientSocket) => handleConnection(clientSocket));
 
   return { s, socket };
 }
