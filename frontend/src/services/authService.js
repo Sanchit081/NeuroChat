@@ -1,48 +1,25 @@
-// src/services/authService.js
-import api from "./api"; // uses the dynamic base URL
+import api from "./api";
 
-// Register a new user
-export const registerUser = async (userData) => {
-  const response = await api.post('/auth/register', userData);
-  return response.data;
+// User registration
+export const register = async (userData) => {
+  const { data } = await api.post("/auth/register", userData);
+  return data;
 };
 
-// Login user
-export const loginUser = async (credentials) => {
-  const response = await api.post('/auth/login', credentials);
-  return response.data;
+// User login
+export const login = async (credentials) => {
+  const { data } = await api.post("/auth/login", credentials);
+  return data;
 };
 
-// Get logged-in user's profile
-export const getProfile = async () => {
-  const response = await api.get('/auth/profile');
-  return response.data;
+// User logout
+export const logout = async () => {
+  const { data } = await api.post("/auth/logout");
+  return data;
 };
 
-// Update profile (with or without profile picture)
-export const updateProfile = async (formData) => {
-  const response = await api.put('/auth/profile', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-  return response.data;
-};
-
-// Logout
-export const logoutUser = async () => {
-  const response = await api.post('/auth/logout');
-  return response.data;
-};
-
-// Delete account
-export const deleteAccount = async () => {
-  const response = await api.delete('/auth/account');
-  return response.data;
-};
-
-// Get current user (using /me endpoint)
+// Get current authenticated user
 export const getCurrentUser = async () => {
-  const response = await api.get('/auth/me');
-  return response.data;
+  const { data } = await api.get("/auth/me");
+  return data;
 };
