@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./src/routes/auth');
@@ -16,12 +17,12 @@ let server = null;
 let io = null;
 
 // -----------------------------
-// Allowed frontend URLs
+// Allowed frontend URLs (full URLs)
 // -----------------------------
 const CLIENT_URLS = [
   process.env.CLIENT_URL,                  // From Render env vars
-  'neuro-chat-rho.vercel.app',             // Production Vercel domain (no protocol for matching)
-  'localhost:3000'                         // Local dev
+  'https://neuro-chat-rho.vercel.app',     // Production Vercel domain
+  'http://localhost:3000'                  // Local dev
 ].filter(Boolean);
 
 // -----------------------------
@@ -37,7 +38,7 @@ app.use((req, res, next) => {
 // -----------------------------
 app.use((req, res, next) => {
   const origin = req.header('Origin');
-  if (origin && CLIENT_URLS.some(url => origin.includes(url))) {
+  if (origin && CLIENT_URLS.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   } else if (origin) {
     console.warn(`❌ Blocked CORS origin: ${origin}`);
@@ -91,13 +92,29 @@ app.use('/api/messages', messageRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 
 // -----------------------------
+// API 404 handler
+// -----------------------------
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ success: false, message: 'API route not found' });
+});
+
+// -----------------------------
+// Serve frontend in production
+// -----------------------------
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+}
+
+// -----------------------------
 // Error handling
 // -----------------------------
 app.use((error, req, res, next) => {
   console.error('Server error:', error);
   res.status(error.status || 500).json({ success: false, message: error.message || 'Server error' });
 });
-app.use('*', (req, res) => res.status(404).json({ success: false, message: 'Not found' }));
 
 // -----------------------------
 // Create HTTP + Socket server
@@ -108,7 +125,7 @@ function createServerInstance() {
   const socket = socketIo(s, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || CLIENT_URLS.some(url => origin.includes(url))) {
+        if (!origin || CLIENT_URLS.includes(origin)) {
           return callback(null, true);
         }
         return callback(new Error(`❌ Not allowed by CORS: ${origin}`));
