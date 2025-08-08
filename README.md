@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SanchitVerse - NeuroChat MVP
 
 A WhatsApp-style real-time chat application built with modern web technologies.
@@ -170,3 +171,6 @@ npm start
 ## License
 
 MIT License
+=======
+# NeuroChat
+>>>>>>> 463f1cbb161a0be781119a36aa2fc8dcfa5dd489
