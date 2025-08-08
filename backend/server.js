@@ -4,7 +4,6 @@ const socketIo = require('socket.io');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const net = require('net');
 require('dotenv').config();
 
 const authRoutes = require('./src/routes/auth');
@@ -17,29 +16,31 @@ let server = null;
 let io = null;
 
 // -----------------------------
-// Allowed frontend URLs (from ENV + defaults)
+// Allowed frontend URLs (env + defaults)
 // -----------------------------
 const CLIENT_URLS = [
-  process.env.CLIENT_URL, // set this in Render: https://your-vercel-project.vercel.app
+  process.env.CLIENT_URL, // e.g. https://neuro-chat.vercel.app
   'http://localhost:3000',
   'http://127.0.0.1:3000'
-].filter(Boolean); // remove undefined
+].filter(Boolean);
 
 // -----------------------------
-// Debug log for all requests (CORS troubleshooting)
+// Debug log for incoming requests (helps CORS debugging)
 // -----------------------------
 app.use((req, res, next) => {
-  console.log(req.method, req.url, 'Origin:', req.header('Origin'));
+  console.log(`[${req.method}] ${req.url} | Origin: ${req.header('Origin') || 'N/A'}`);
   next();
 });
 
 // -----------------------------
-// Universal CORS handler - must be early
+// Universal CORS handler
 // -----------------------------
 app.use((req, res, next) => {
   const origin = req.header('Origin');
   if (origin && CLIENT_URLS.some(url => origin.startsWith(url))) {
     res.header('Access-Control-Allow-Origin', origin);
+  } else if (origin) {
+    console.warn(`❌ Blocked CORS origin: ${origin}`);
   }
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS,HEAD');
@@ -57,7 +58,7 @@ app.use((req, res, next) => {
 app.use(helmet());
 app.use('/api/', rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 1000, // high for development
+  max: 1000,
   message: 'Too many requests from this IP, please try again later.'
 }));
 
@@ -87,8 +88,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
-
-// Health check
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 
 // -----------------------------
@@ -121,41 +120,14 @@ function createServerInstance() {
 }
 
 // -----------------------------
-// Port scanning helper
+// Start Server (no port scanning in production)
 // -----------------------------
-function isPortFree(port) {
-  return new Promise((resolve) => {
-    const tester = net.createServer()
-      .once('error', () => resolve(false))
-      .once('listening', () => tester.once('close', () => resolve(true)).close())
-      .listen(port);
-  });
-}
-
-// -----------------------------
-// Auto-start on free port
-// -----------------------------
-const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 5000;
-
-(async function startServer() {
-  let port = DEFAULT_PORT;
-
-  while (!(await isPortFree(port))) {
-    console.warn(`⚠️ Port ${port} in use. Trying ${port + 1}...`);
-    port++;
-  }
-
-  const { s, socket } = createServerInstance();
-  s.listen(port, () => {
-    server = s;
-    io = socket;
-    console.log(`🚀 Server running on port ${port}`);
-    console.log(`📡 Socket.IO CORS origins: ${CLIENT_URLS.join(', ')}`);
-    console.log(`🔗 API base URL: http://localhost:${port}`);
-  });
-
-  s.on('error', (err) => {
-    console.error('Fatal server error:', err);
-    process.exit(1);
-  });
-})();
+const PORT = process.env.PORT || 5000;
+const { s, socket } = createServerInstance();
+s.listen(PORT, () => {
+  server = s;
+  io = socket;
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 Socket.IO allowed origins: ${CLIENT_URLS.join(', ')}`);
+  console.log(`🔗 API base URL: ${process.env.NODE_ENV === 'production' ? 'Render Production' : 'Local Dev'}`);
+});
