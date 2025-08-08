@@ -17,12 +17,13 @@ let server = null;
 let io = null;
 
 // -----------------------------
-// Allowed frontend URLs
+// Allowed frontend URLs (from ENV + defaults)
 // -----------------------------
 const CLIENT_URLS = [
-  process.env.CLIENT_URL || 'http://localhost:3000',
+  process.env.CLIENT_URL, // set this in Render: https://your-vercel-project.vercel.app
+  'http://localhost:3000',
   'http://127.0.0.1:3000'
-];
+].filter(Boolean); // remove undefined
 
 // -----------------------------
 // Debug log for all requests (CORS troubleshooting)
@@ -33,11 +34,11 @@ app.use((req, res, next) => {
 });
 
 // -----------------------------
-// Universal CORS handler - must be first
+// Universal CORS handler - must be early
 // -----------------------------
 app.use((req, res, next) => {
   const origin = req.header('Origin');
-  if (CLIENT_URLS.includes(origin)) {
+  if (origin && CLIENT_URLS.some(url => origin.startsWith(url))) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -55,8 +56,8 @@ app.use((req, res, next) => {
 // -----------------------------
 app.use(helmet());
 app.use('/api/', rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // Increased from 100 to 1000 for development
+  windowMs: 15 * 60 * 1000,
+  max: 1000, // high for development
   message: 'Too many requests from this IP, please try again later.'
 }));
 
@@ -149,7 +150,7 @@ const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 5000;
     server = s;
     io = socket;
     console.log(`🚀 Server running on port ${port}`);
-    console.log(`📡 Socket.IO ready (CORS origin(s): ${CLIENT_URLS.join(', ')})`);
+    console.log(`📡 Socket.IO CORS origins: ${CLIENT_URLS.join(', ')}`);
     console.log(`🔗 API base URL: http://localhost:${port}`);
   });
 
