@@ -1,21 +1,14 @@
-import axios from "axios";
+// frontend/src/services/api.js
+import axios from 'axios';
 
-// ✅ Base URL points to backend + `/api`
 const API_BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://neurochat-cozz.onrender.com/api" // add `/api`
-    : "http://localhost:5000/api";
+  process.env.NODE_ENV === 'production'
+    ? 'https://neurochat-cozz.onrender.com/api' // Production backend URL
+    : 'http://localhost:5000/api';              // Local backend URL
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,
+  withCredentials: true, // Ensures cookies & auth tokens are sent
 });
-
-if (process.env.NODE_ENV !== "production") {
-  api.interceptors.request.use((config) => {
-    console.log(`[API Request] ${config.method.toUpperCase()} ${config.url}`);
-    return config;
-  });
-}
 
 export default api;
