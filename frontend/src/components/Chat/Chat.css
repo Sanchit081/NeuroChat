@@ -587,30 +587,27 @@
 }
 
 .back-btn {
-  background: #667eea;
+  background: none;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   cursor: pointer;
-  padding: 10px 15px;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  transition: all 0.2s;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #333;
+  font-weight: 500;
+  transition: background-color 0.2s;
   display: flex;
   align-items: center;
-  gap: 5px;
-  min-width: 80px;
   justify-content: center;
+  min-width: 60px;
 }
 
 .back-btn:hover {
-  background: #5a67d8;
-  transform: translateY(-1px);
+  background: #f1f3f4;
 }
 
 .back-btn:active {
-  transform: translateY(0);
-  background: #4c51bf;
+  background: #e8eaed;
 }
 
 .mobile-user-info {

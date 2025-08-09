@@ -105,11 +105,25 @@ const handleConnection = (io) => {
     // Handle sending messages
     socket.on('sendMessage', async (data) => {
       try {
+        console.log('📥 Received sendMessage event:', {
+          data,
+          userId: socket.userId,
+          username: socket.user?.username
+        });
+        
         const { recipientId, content, messageType = 'text' } = data;
+
+        // Validate input
+        if (!recipientId || !content) {
+          console.error('❌ Invalid message data:', { recipientId, content });
+          socket.emit('messageError', { error: 'Invalid message data' });
+          return;
+        }
 
         // Validate recipient exists
         const recipient = await User.findById(recipientId);
         if (!recipient) {
+          console.error('❌ Recipient not found:', recipientId);
           socket.emit('messageError', { error: 'Recipient not found' });
           return;
         }
@@ -117,6 +131,7 @@ const handleConnection = (io) => {
         // Check if users are friends
         const areFriends = await FriendRequest.areFriends(socket.userId, recipientId);
         if (!areFriends) {
+          console.error('❌ Users are not friends:', { sender: socket.userId, recipient: recipientId });
           socket.emit('messageError', { error: 'You can only message friends' });
           return;
         }
@@ -125,49 +140,67 @@ const handleConnection = (io) => {
         const message = new Message({
           sender: socket.userId,
           recipient: recipientId,
-          content,
+          content: content.trim(),
           messageType,
           status: 'sent'
         });
 
-        await message.save();
-        await message.populate('sender', 'username profilePicture');
-        await message.populate('recipient', 'username profilePicture');
+        console.log('💾 Saving message to database...');
+        const savedMessage = await message.save();
+        console.log('✅ Message saved:', savedMessage._id);
+        
+        await savedMessage.populate('sender', 'username profilePicture');
+        await savedMessage.populate('recipient', 'username profilePicture');
+        
+        console.log('👥 Message populated with user data');
 
         // Send to conversation room
         const roomId = [socket.userId, recipientId].sort().join('-');
         console.log(`📤 Sending message to room ${roomId}:`, {
-          messageId: message._id,
-          sender: message.sender.username,
-          recipient: message.recipient.username,
-          content: message.content.substring(0, 50) + '...',
+          messageId: savedMessage._id,
+          sender: savedMessage.sender.username,
+          recipient: savedMessage.recipient.username,
+          content: savedMessage.content.substring(0, 50) + '...',
           roomMembers: io.sockets.adapter.rooms.get(roomId)?.size || 0
         });
         
+        // Prepare message object for emission
+        const messageToSend = {
+          _id: savedMessage._id,
+          sender: savedMessage.sender,
+          recipient: savedMessage.recipient,
+          content: savedMessage.content,
+          messageType: savedMessage.messageType,
+          status: savedMessage.status,
+          createdAt: savedMessage.createdAt,
+          updatedAt: savedMessage.updatedAt
+        };
+        
         // Send to room first
-        io.to(roomId).emit('newMessage', message);
+        io.to(roomId).emit('newMessage', messageToSend);
         
         // CRITICAL: Always send directly to both users to ensure delivery
         console.log(`📨 Direct message delivery:`);
         console.log(`- Sender ${socket.user.username} (${socket.id})`);
-        socket.emit('newMessage', message);
+        socket.emit('newMessage', messageToSend);
         
         if (connectedUsers.has(recipientId)) {
           const recipientSocket = connectedUsers.get(recipientId);
           console.log(`- Recipient ${recipient.username} (${recipientSocket.socketId})`);
-          io.to(recipientSocket.socketId).emit('newMessage', message);
+          io.to(recipientSocket.socketId).emit('newMessage', messageToSend);
         } else {
           console.log(`- Recipient ${recipient.username} is offline`);
         }
 
         // If recipient is online, mark as delivered
         if (connectedUsers.has(recipientId)) {
-          message.status = 'delivered';
-          await message.save();
+          savedMessage.status = 'delivered';
+          await savedMessage.save();
+          console.log('✅ Message marked as delivered');
           
           // Notify sender of delivery
           socket.emit('messageDelivered', {
-            messageId: message._id,
+            messageId: savedMessage._id,
             status: 'delivered'
           });
 
@@ -175,16 +208,28 @@ const handleConnection = (io) => {
           const recipientSocket = connectedUsers.get(recipientId);
           if (recipientSocket) {
             io.to(recipientSocket.socketId).emit('messageDelivered', {
-              messageId: message._id,
+              messageId: savedMessage._id,
               status: 'delivered'
             });
           }
         }
 
-        console.log(`Message sent from ${socket.user.username} to ${recipient.username}`);
+        console.log(`✅ Message sent successfully from ${socket.user.username} to ${recipient.username}`);
       } catch (error) {
-        console.error('Send message error:', error);
-        socket.emit('messageError', { error: 'Failed to send message' });
+        console.error('❌ CRITICAL Send message error:', {
+          error: error.message,
+          stack: error.stack,
+          data: data,
+          userId: socket.userId,
+          username: socket.user?.username,
+          recipientId: data?.recipientId,
+          content: data?.content
+        });
+        socket.emit('messageError', { 
+          error: 'Failed to send message',
+          details: error.message,
+          code: 'SEND_MESSAGE_ERROR'
+        });
       }
     });
 

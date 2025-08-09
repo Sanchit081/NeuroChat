@@ -5,6 +5,70 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Search users by email for friend requests
+router.post('/search-by-email', authenticateToken, async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+    
+    // Find user by email (case insensitive)
+    const user = await User.findOne({ 
+      email: email.trim().toLowerCase() 
+    }).select('_id username email profilePicture');
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No user found with this email address' 
+      });
+    }
+    
+    // Don't allow adding yourself
+    if (user._id.toString() === req.user.userId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You cannot add yourself as a friend' 
+      });
+    }
+    
+    // Check if already friends or request exists
+    const existingRelation = await FriendRequest.findOne({
+      $or: [
+        { sender: req.user.userId, recipient: user._id },
+        { sender: user._id, recipient: req.user.userId }
+      ]
+    });
+    
+    let relationshipStatus = 'none';
+    if (existingRelation) {
+      if (existingRelation.status === 'accepted') {
+        relationshipStatus = 'friends';
+      } else if (existingRelation.status === 'pending') {
+        relationshipStatus = existingRelation.sender.toString() === req.user.userId ? 'sent' : 'received';
+      } else if (existingRelation.status === 'blocked') {
+        relationshipStatus = 'blocked';
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        relationshipStatus
+      }
+    });
+  } catch (error) {
+    console.error('Search by email error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Get user's friends
 router.get('/friends', authenticateToken, async (req, res) => {
   try {
@@ -51,25 +115,35 @@ router.get('/requests/sent', authenticateToken, async (req, res) => {
 // Send friend request
 router.post('/request', authenticateToken, async (req, res) => {
   try {
-    const { recipientId, message = '' } = req.body;
+    const { recipientId, email, message = '' } = req.body;
     const senderId = req.user.userId;
+    let recipient;
 
-    // Validate recipient exists
-    const recipient = await User.findById(recipientId);
+    // Find recipient by ID or email
+    if (recipientId) {
+      recipient = await User.findById(recipientId);
+    } else if (email) {
+      recipient = await User.findOne({ email: email.trim().toLowerCase() });
+    } else {
+      return res.status(400).json({ success: false, message: 'Recipient ID or email is required' });
+    }
+
     if (!recipient) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    const recipientIdFinal = recipient._id.toString();
+
     // Check if trying to send request to self
-    if (senderId === recipientId) {
+    if (senderId === recipientIdFinal) {
       return res.status(400).json({ success: false, message: 'Cannot send friend request to yourself' });
     }
 
     // Check if request already exists
     const existingRequest = await FriendRequest.findOne({
       $or: [
-        { sender: senderId, recipient: recipientId },
-        { sender: recipientId, recipient: senderId }
+        { sender: senderId, recipient: recipientIdFinal },
+        { sender: recipientIdFinal, recipient: senderId }
       ]
     });
 
@@ -86,7 +160,7 @@ router.post('/request', authenticateToken, async (req, res) => {
     // Create new friend request
     const friendRequest = new FriendRequest({
       sender: senderId,
-      recipient: recipientId,
+      recipient: recipientIdFinal,
       message: message.trim()
     });
 
