@@ -75,9 +75,9 @@ const Home = () => {
 
       {/* Hero Section */}
       <main className="hero-section">
-        <div className={`hero-content ${animationClass}`}>
+        <div className="hero-content">
           <div className="hero-badge">
-            <span className="badge-text">✨ by SanchitVerse</span>
+            ✨ by SanchitVerse
           </div>
           
           <h1 className="hero-title">
@@ -150,7 +150,42 @@ const Home = () => {
         </div>
       </main>
 
-
+      <main className="hero-section">
+        <div className="hero-content">
+          <div className="hero-badge">
+            ✨ by SanchitVerse
+          </div>
+          
+          <h1 className="hero-title">
+            Simple. Secure. Reliable messaging.
+          </h1>
+          
+          <p className="hero-subtitle">
+            With NeuroChat, you'll get fast, simple, secure messaging and calling for free*, available on phones all over the world.
+          </p>
+          
+          <div className="hero-actions">
+            <button className="cta-button primary" onClick={handleStartChatting}>
+              Start Chatting
+            </button>
+          </div>
+          
+          <div className="hero-features">
+            <div className="feature-item">
+              <span className="feature-icon">💬</span>
+              <span>Simple</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🔒</span>
+              <span>Secure</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">⚡</span>
+              <span>Fast</span>
+            </div>
+          </div>
+        </div>
+      </main>
 
       {/* Footer */}
       <footer className="footer">
