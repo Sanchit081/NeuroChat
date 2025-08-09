@@ -57,7 +57,13 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('messageError', (error) => {
-        console.error('❌ Message error:', error);
+        console.error('❌ Message error:', {
+          error: error.error || error.message || error,
+          details: error.details,
+          code: error.code
+        });
+        // You could also show a toast notification here
+        // toast.error(error.error || error.message || 'Message failed to send');
       });
 
       newSocket.on('disconnect', (reason) => {

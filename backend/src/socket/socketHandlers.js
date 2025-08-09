@@ -164,11 +164,19 @@ const handleConnection = (io) => {
           roomMembers: io.sockets.adapter.rooms.get(roomId)?.size || 0
         });
         
-        // Prepare message object for emission
+        // Prepare message object for emission (convert to plain object to avoid circular references)
         const messageToSend = {
-          _id: savedMessage._id,
-          sender: savedMessage.sender,
-          recipient: savedMessage.recipient,
+          _id: savedMessage._id.toString(),
+          sender: {
+            _id: savedMessage.sender._id.toString(),
+            username: savedMessage.sender.username,
+            profilePicture: savedMessage.sender.profilePicture
+          },
+          recipient: {
+            _id: savedMessage.recipient._id.toString(),
+            username: savedMessage.recipient.username,
+            profilePicture: savedMessage.recipient.profilePicture
+          },
           content: savedMessage.content,
           messageType: savedMessage.messageType,
           status: savedMessage.status,
