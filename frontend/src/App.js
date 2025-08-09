@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
-import Home from './components/Home/Home';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Chat from './components/Chat/Chat';
 import Profile from './components/Profile/Profile';
-import About from './components/About/About';
 import PageLoader from './components/Common/PageLoader';
 import './App.css';
 
@@ -43,26 +41,6 @@ const PublicRoute = ({ children }) => {
   return user ? <Navigate to="/chat" /> : children;
 };
 
-// Home Route Component (always show home page after loader)
-const HomeRoute = () => {
-  const { loading } = useAuth();
-  
-  console.log('🏠 HomeRoute - loading:', loading);
-  
-  if (loading) {
-    console.log('🔄 HomeRoute - showing loading...');
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading...</p>
-      </div>
-    );
-  }
-  
-  console.log('🏠 HomeRoute - showing Home page');
-  return <Home />;
-};
-
 function App() {
   const [showPageLoader, setShowPageLoader] = useState(true);
   const [appReady, setAppReady] = useState(false);
@@ -89,8 +67,8 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            {/* Home Route */}
-            <Route path="/" element={<HomeRoute />} />
+            {/* Root Route - Redirect to Login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
             
             {/* Public Routes */}
             <Route 
@@ -109,9 +87,6 @@ function App() {
                 </PublicRoute>
               } 
             />
-            
-            {/* About Route */}
-            <Route path="/about" element={<About />} />
             
             {/* Protected Routes */}
             <Route 
@@ -133,8 +108,8 @@ function App() {
               } 
             />
             
-            {/* Fallback Route */}
-            <Route path="*" element={<HomeRoute />} />
+            {/* Fallback Route - Redirect to Login */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
       </Router>
