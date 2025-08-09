@@ -150,18 +150,32 @@ export const SocketProvider = ({ children }) => {
   }, [user, token]);
 
   const sendMessage = (recipientId, content, messageType = 'text') => {
-    if (socket) {
+    if (socket && socket.connected) {
+      console.log('📤 Sending message via socket:', {
+        recipientId,
+        content: content.substring(0, 50) + '...',
+        messageType,
+        socketConnected: socket.connected
+      });
       socket.emit('sendMessage', {
         recipientId,
         content,
         messageType
       });
+    } else {
+      console.error('❌ Cannot send message - socket not connected:', {
+        hasSocket: !!socket,
+        connected: socket?.connected
+      });
     }
   };
 
   const joinConversation = (recipientId) => {
-    if (socket) {
+    if (socket && socket.connected) {
+      console.log('🏠 Joining conversation with:', recipientId);
       socket.emit('joinConversation', { recipientId });
+    } else {
+      console.error('❌ Cannot join conversation - socket not connected');
     }
   };
 

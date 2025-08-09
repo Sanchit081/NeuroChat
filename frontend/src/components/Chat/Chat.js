@@ -132,6 +132,7 @@ const Chat = () => {
   };
 
   const handleBackToSidebar = () => {
+    console.log('📱 Back button clicked - returning to sidebar');
     if (isMobile) {
       setShowSidebar(true);
       setSelectedUser(null);
@@ -176,7 +177,12 @@ const Chat = () => {
           {/* Mobile back button */}
           {isMobile && selectedUser && (
             <div className="mobile-chat-header">
-              <button className="back-btn" onClick={handleBackToSidebar}>
+              <button 
+                className="back-btn" 
+                onClick={handleBackToSidebar}
+                type="button"
+                aria-label="Go back to chat list"
+              >
                 ← Back
               </button>
               <div className="mobile-user-info">
@@ -185,7 +191,12 @@ const Chat = () => {
                   alt={selectedUser.username}
                   className="mobile-user-avatar"
                 />
-                <span className="mobile-username">{selectedUser.username}</span>
+                <div className="mobile-user-details">
+                  <span className="mobile-username">{selectedUser.username}</span>
+                  <span className="mobile-user-status">
+                    {onlineUsers.some(u => u.userId === selectedUser._id) ? 'Online' : 'Offline'}
+                  </span>
+                </div>
               </div>
             </div>
           )}

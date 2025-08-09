@@ -580,41 +580,75 @@
   background: white;
   border-bottom: 1px solid #e1e5e9;
   gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .back-btn {
-  background: none;
+  background: #667eea;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
-  color: #667eea;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: white;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 80px;
+  justify-content: center;
 }
 
 .back-btn:hover {
-  background: #f1f3f4;
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+  background: #4c51bf;
 }
 
 .mobile-user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
 }
 
 .mobile-user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid #e1e5e9;
+}
+
+.mobile-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .mobile-username {
   font-weight: 600;
   color: #333;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.mobile-user-status {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.mobile-user-status:contains('Online') {
+  color: #28a745;
 }
 
 /* Responsive Styles */

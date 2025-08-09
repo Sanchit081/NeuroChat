@@ -44,7 +44,7 @@ const authenticateSocket = async (socket, next) => {
 // Handle socket connection
 const handleConnection = (io) => {
   return async (socket) => {
-    console.log(`User connected: ${socket.user.username} (${socket.userId})`);
+    console.log(`✅ User connected: ${socket.user.username} (${socket.userId}) - Socket ID: ${socket.id}`);
     
     // Store connected user
     connectedUsers.set(socket.userId, {
@@ -52,6 +52,8 @@ const handleConnection = (io) => {
       user: socket.user,
       isTyping: false
     });
+    
+    console.log(`📊 Total connected users: ${connectedUsers.size}`);
 
     // Update user online status
     await User.findByIdAndUpdate(socket.userId, {
@@ -84,10 +86,12 @@ const handleConnection = (io) => {
       const { recipientId } = data;
       const roomId = [socket.userId, recipientId].sort().join('-');
       socket.join(roomId);
-      console.log(`✅ User ${socket.user.username} joined conversation room: ${roomId}`);
+      
+      const roomSize = io.sockets.adapter.rooms.get(roomId)?.size || 0;
+      console.log(`✅ User ${socket.user.username} joined room: ${roomId} (${roomSize} members)`);
       
       // Confirm room join to client
-      socket.emit('roomJoined', { roomId, recipientId });
+      socket.emit('roomJoined', { roomId, recipientId, roomSize });
     });
 
     // Handle leaving a conversation room
@@ -136,15 +140,24 @@ const handleConnection = (io) => {
           messageId: message._id,
           sender: message.sender.username,
           recipient: message.recipient.username,
-          content: message.content.substring(0, 50) + '...'
+          content: message.content.substring(0, 50) + '...',
+          roomMembers: io.sockets.adapter.rooms.get(roomId)?.size || 0
         });
+        
+        // Send to room first
         io.to(roomId).emit('newMessage', message);
         
-        // Also send directly to both users as fallback
+        // CRITICAL: Always send directly to both users to ensure delivery
+        console.log(`📨 Direct message delivery:`);
+        console.log(`- Sender ${socket.user.username} (${socket.id})`);
         socket.emit('newMessage', message);
+        
         if (connectedUsers.has(recipientId)) {
           const recipientSocket = connectedUsers.get(recipientId);
+          console.log(`- Recipient ${recipient.username} (${recipientSocket.socketId})`);
           io.to(recipientSocket.socketId).emit('newMessage', message);
+        } else {
+          console.log(`- Recipient ${recipient.username} is offline`);
         }
 
         // If recipient is online, mark as delivered
