@@ -21,7 +21,14 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user && token) {
-      const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+      // Ensure we're using the correct protocol (https for production)
+      let SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+      
+      // Force HTTPS for production URLs
+      if (window.location.hostname !== 'localhost') {
+        SOCKET_URL = SOCKET_URL.replace('http://', 'https://');
+      }
+      
       console.log('🔌 Attempting to connect to Socket.io server:', SOCKET_URL);
       
       const newSocket = io(SOCKET_URL, {
@@ -29,24 +36,36 @@ export const SocketProvider = ({ children }) => {
           token: token
         },
         transports: ['websocket', 'polling'],
-        timeout: 20000,
+        secure: true,
+        rejectUnauthorized: false, // Only for development with self-signed certs
+        timeout: 30000,
         forceNew: true,
         reconnection: true,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 10000,
+        autoConnect: true
       });
 
       newSocket.on('connect', () => {
-        console.log('✅ Connected to Socket.io server');
+        console.log('✅ Connected to Socket.io server with ID:', newSocket.id);
         setSocket(newSocket);
       });
 
       newSocket.on('disconnect', (reason) => {
         console.log('❌ Disconnected from Socket.io server:', reason);
+        if (reason === 'io server disconnect') {
+          // The disconnection was initiated by the server, you need to reconnect manually
+          newSocket.connect();
+        }
       });
 
       newSocket.on('connect_error', (error) => {
         console.error('🚫 Socket.io connection error:', error.message);
+        // Attempt to reconnect after a delay
+        setTimeout(() => {
+          newSocket.connect();
+        }, 1000);
       });
 
       newSocket.on('onlineUsers', (users) => {
