@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
@@ -6,6 +6,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Chat from './components/Chat/Chat';
 import Profile from './components/Profile/Profile';
+import PageLoader from './components/Common/PageLoader';
 import './App.css';
 
 // Protected Route Component
@@ -41,6 +42,26 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+  const [showPageLoader, setShowPageLoader] = useState(true);
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    // Simulate app initialization
+    const initTimer = setTimeout(() => {
+      setAppReady(true);
+    }, 1000);
+
+    return () => clearTimeout(initTimer);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setShowPageLoader(false);
+  };
+
+  if (showPageLoader) {
+    return <PageLoader onLoadingComplete={handleLoadingComplete} />;
+  }
+
   return (
     <AuthProvider>
       <Router>

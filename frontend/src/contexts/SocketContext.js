@@ -30,19 +30,19 @@ export const SocketProvider = ({ children }) => {
       }
       
       console.log('🔌 Attempting to connect to Socket.io server:', SOCKET_URL);
+      console.log('🔑 Using token:', token ? `${token.substring(0, 20)}...` : 'No token');
       
       const newSocket = io(SOCKET_URL, {
         auth: {
           token: token
         },
         transports: ['websocket', 'polling'],
-        secure: true,
-        rejectUnauthorized: false, // Only for development with self-signed certs
+        secure: window.location.protocol === 'https:',
         timeout: 30000,
         forceNew: true,
         reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 2000,
         reconnectionDelayMax: 10000,
         autoConnect: true
       });
@@ -62,10 +62,13 @@ export const SocketProvider = ({ children }) => {
 
       newSocket.on('connect_error', (error) => {
         console.error('🚫 Socket.io connection error:', error.message);
-        // Attempt to reconnect after a delay
-        setTimeout(() => {
-          newSocket.connect();
-        }, 1000);
+        console.error('🚫 Error details:', error);
+        
+        // Check if it's an authentication error
+        if (error.message.includes('Authentication')) {
+          console.error('🔐 Authentication failed - token may be invalid or expired');
+          // You might want to redirect to login or refresh the token here
+        }
       });
 
       newSocket.on('onlineUsers', (users) => {

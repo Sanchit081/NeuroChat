@@ -147,7 +147,13 @@ function createServerInstance() {
   });
 
   socket.use(authenticateSocket);
-  socket.on('connection', (clientSocket) => handleConnection(clientSocket));
+  socket.on('connection', handleConnection(socket));
+  
+  // Add error logging for socket connections
+  socket.engine.on('connection_error', (err) => {
+    console.error('🚫 Socket.io connection error:', err.req);
+    console.error('🚫 Error details:', err.code, err.message, err.context);
+  });
 
   return { s, socket };
 }

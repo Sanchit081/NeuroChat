@@ -9,24 +9,35 @@ const connectedUsers = new Map();
 // Socket authentication middleware
 const authenticateSocket = async (socket, next) => {
   try {
-    const token = socket.handshake.auth.token;
+    const token = socket.handshake.auth.token || socket.handshake.headers.authorization?.replace('Bearer ', '');
+    
+    console.log('🔐 Socket authentication attempt:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      socketId: socket.id,
+      origin: socket.handshake.headers.origin
+    });
     
     if (!token) {
-      return next(new Error('Authentication error'));
+      console.log('❌ No token provided for socket authentication');
+      return next(new Error('Authentication error: No token provided'));
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
     
     if (!user) {
+      console.log('❌ User not found for socket authentication:', decoded.userId);
       return next(new Error('User not found'));
     }
 
     socket.userId = user._id.toString();
     socket.user = user;
+    console.log('✅ Socket authenticated successfully:', user.username);
     next();
   } catch (error) {
-    next(new Error('Authentication error'));
+    console.error('❌ Socket authentication error:', error.message);
+    next(new Error(`Authentication error: ${error.message}`));
   }
 };
 
