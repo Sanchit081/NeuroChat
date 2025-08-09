@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
+import Home from './components/Home/Home';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Chat from './components/Chat/Chat';
@@ -41,6 +42,22 @@ const PublicRoute = ({ children }) => {
   return user ? <Navigate to="/chat" /> : children;
 };
 
+// Home Route Component (show home if not authenticated, redirect to chat if authenticated)
+const HomeRoute = () => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+  
+  return user ? <Navigate to="/chat" /> : <Home />;
+};
+
 function App() {
   const [showPageLoader, setShowPageLoader] = useState(true);
   const [appReady, setAppReady] = useState(false);
@@ -67,6 +84,9 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+            {/* Home Route */}
+            <Route path="/" element={<HomeRoute />} />
+            
             {/* Public Routes */}
             <Route 
               path="/login" 
@@ -105,9 +125,8 @@ function App() {
               } 
             />
             
-            {/* Default Route */}
-            <Route path="/" element={<Navigate to="/chat" />} />
-            <Route path="*" element={<Navigate to="/chat" />} />
+            {/* Fallback Route */}
+            <Route path="*" element={<HomeRoute />} />
           </Routes>
         </div>
       </Router>
