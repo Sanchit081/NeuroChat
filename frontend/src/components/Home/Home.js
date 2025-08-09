@@ -11,8 +11,17 @@ const Home = () => {
 
   useEffect(() => {
     console.log('🏠 Home component mounted successfully!');
-    // Trigger animations on component mount
-    setTimeout(() => setAnimationClass('animate-in'), 100);
+    const timer = setTimeout(() => {
+      setAnimationClass('animate-in');
+    }, 100);
+
+    // Mobile debugging
+    console.log('📱 Home component mounted');
+    console.log('📱 User agent:', navigator.userAgent);
+    console.log('📱 Screen size:', window.innerWidth, 'x', window.innerHeight);
+    console.log('📱 Viewport size:', window.visualViewport?.width || 'N/A', 'x', window.visualViewport?.height || 'N/A');
+
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleMenu = () => {
