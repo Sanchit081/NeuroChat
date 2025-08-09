@@ -7,6 +7,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Chat from './components/Chat/Chat';
 import Profile from './components/Profile/Profile';
+import About from './components/About/About';
 import PageLoader from './components/Common/PageLoader';
 import './App.css';
 
@@ -108,6 +109,9 @@ function App() {
                 </PublicRoute>
               } 
             />
+            
+            {/* About Route */}
+            <Route path="/about" element={<About />} />
             
             {/* Protected Routes */}
             <Route 

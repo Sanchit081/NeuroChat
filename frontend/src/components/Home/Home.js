@@ -37,6 +37,10 @@ const Home = () => {
     }
   };
 
+  const handleAbout = () => {
+    navigate('/about');
+  };
+
   return (
     <div className="home-container">
       {/* Navbar */}
@@ -55,18 +59,15 @@ const Home = () => {
             >
               <span></span>
               <span></span>
-              <span></span>
             </button>
             
             <div className={`nav-links ${menuOpen ? 'active' : ''}`}>
-              <a href="#about" className="nav-link">About</a>
-              <a href="#contact" className="nav-link">Contact</a>
-              <button className="nav-btn login-btn" onClick={handleLogin}>
-                Login
-              </button>
-              <button className="nav-btn signup-btn" onClick={handleSignup}>
-                Sign Up
-              </button>
+              <div className="nav-links">
+                <button className="nav-link" onClick={handleAbout}>About</button>
+                <button className="nav-link">Contact</button>
+                <button className="nav-link" onClick={handleLogin}>Login</button>
+                <button className="nav-link signup-btn" onClick={handleSignup}>Sign Up</button>
+              </div>
             </div>
           </div>
         </div>
@@ -131,6 +132,29 @@ const Home = () => {
         </div>
       </main>
 
+      {/* Features Section */}
+      <section className="features">
+        <div className="features-grid">
+          <div className="feature-card">
+            <span className="feature-icon">⚡</span>
+            <h3>Real-time Messaging</h3>
+            <p>Instant message delivery with live typing indicators and read receipts.</p>
+          </div>
+          
+          <div className="feature-card">
+            <span className="feature-icon">🔒</span>
+            <h3>End-to-end Encrypted</h3>
+            <p>Your conversations are secure with advanced encryption technology.</p>
+          </div>
+          
+          <div className="feature-card">
+            <span className="feature-icon">🌐</span>
+            <h3>Cross-platform</h3>
+            <p>Access your chats seamlessly across all your devices and platforms.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
@@ -150,12 +174,22 @@ const Home = () => {
               <a href="#terms" className="footer-link">Terms of Service</a>
               <a href="#support" className="footer-link">Support</a>
             </div>
-            
-            <div className="footer-credits">
-              <p>Developed by <span className="highlight">SanchitVerse</span></p>
-              <p className="copyright">© 2024 NeuroChat. All rights reserved.</p>
-            </div>
           </div>
+          
+          <div className="footer-section">
+            <h4>Features</h4>
+            <ul className="footer-links">
+              <li>Real-time Messaging</li>
+              <li>End-to-end Encryption</li>
+              <li>Cross-platform Support</li>
+              <li>Friend Requests</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="footer-bottom">
+          <p>&copy; 2024 NeuroChat by SanchitVerse. All rights reserved.</p>
+          <p className="footer-tagline">Developed with ❤️ by SanchitVerse</p>
         </div>
       </footer>
     </div>

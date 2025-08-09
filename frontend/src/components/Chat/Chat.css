@@ -454,9 +454,18 @@
 /* Messages */
 .messages-container {
   flex: 1;
-  overflow-y: auto;
   padding: 20px;
-  background: #f8f9fa;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
+  height: calc(100vh - 140px);
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .date-separator {
@@ -474,13 +483,28 @@
 
 .message {
   display: flex;
-  margin-bottom: 16px;
   align-items: flex-end;
-  gap: 8px;
+  gap: 12px;
+  margin-bottom: 16px;
+  animation: messageSlideIn 0.3s ease-out;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.message.received {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-self: flex-start;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .message.sent {
   flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
 }
 
 .message-avatar {
@@ -754,11 +778,29 @@
   .message-input-container {
     padding: 12px 16px;
     gap: 8px;
+    position: sticky;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
-  
+
   .message-input {
     font-size: 16px; /* Prevents zoom on iOS */
-    padding: 10px 14px;
+    padding: 12px 16px;
+    border-radius: 25px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .chat-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
   }
   
   /* Adjust sidebar for mobile */
@@ -796,16 +838,30 @@
   
   /* Message bubbles mobile optimization */
   .message-bubble {
-    max-width: 85%;
+    max-width: 80%;
     font-size: 0.9rem;
+    word-wrap: break-word;
+    word-break: break-word;
   }
-  
-  .message-bubble.sent {
-    margin-left: 15%;
+
+  .message.sent {
+    width: 100%;
+    justify-content: flex-end;
+    margin-left: auto;
+    margin-right: 0;
   }
-  
-  .message-bubble.received {
-    margin-right: 15%;
+
+  .message.received {
+    width: 100%;
+    justify-content: flex-start;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .messages-container {
+    height: calc(100vh - 120px);
+    padding: 16px 12px;
+    gap: 12px;
   }
   
   /* Conversation item mobile optimization */
