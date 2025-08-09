@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import FriendManager from '../Friends/FriendManager';
 import './Chat.css';
 
 const ChatSidebar = ({ 
@@ -14,6 +15,7 @@ const ChatSidebar = ({
   setActiveTab 
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [showFriendManager, setShowFriendManager] = useState(false);
 
   const filteredConversations = conversations.filter(conv =>
     conv.username.toLowerCase().includes(searchQuery.toLowerCase())
@@ -73,6 +75,13 @@ const ChatSidebar = ({
         </div>
         
         <div className="header-actions">
+          <button 
+            onClick={() => setShowFriendManager(true)} 
+            className="action-btn" 
+            title="Friends & Requests"
+          >
+            👥
+          </button>
           <Link to="/profile" className="action-btn" title="Profile">
             ⚙️
           </Link>
@@ -105,7 +114,7 @@ const ChatSidebar = ({
           className={`tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
           onClick={() => setActiveTab('contacts')}
         >
-          Contacts ({users.length})
+          Friends ({users.length})
         </button>
       </div>
 
@@ -185,13 +194,20 @@ const ChatSidebar = ({
               ))
             ) : (
               <div className="empty-state">
-                <p>No contacts found</p>
-                <small>Try a different search term</small>
+                <p>No friends found</p>
+                <small>Add friends to start chatting privately</small>
               </div>
             )}
           </div>
         )}
       </div>
+
+      {/* Friend Manager Modal */}
+      {showFriendManager && (
+        <FriendManager 
+          onClose={() => setShowFriendManager(false)}
+        />
+      )}
     </div>
   );
 };

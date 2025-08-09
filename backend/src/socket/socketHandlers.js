@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Message = require('../models/Message');
+const FriendRequest = require('../models/FriendRequest');
 
 // Store connected users
 const connectedUsers = new Map();
@@ -92,6 +93,13 @@ const handleConnection = (io) => {
         const recipient = await User.findById(recipientId);
         if (!recipient) {
           socket.emit('messageError', { error: 'Recipient not found' });
+          return;
+        }
+
+        // Check if users are friends
+        const areFriends = await FriendRequest.areFriends(socket.userId, recipientId);
+        if (!areFriends) {
+          socket.emit('messageError', { error: 'You can only message friends' });
           return;
         }
 

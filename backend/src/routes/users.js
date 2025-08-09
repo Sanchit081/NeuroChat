@@ -1,27 +1,26 @@
 const express = require('express');
 const User = require('../models/User');
+const FriendRequest = require('../models/FriendRequest');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
 // @route   GET /api/users
-// @desc    Get all users (for chat list)
+// @desc    Get user's friends (for chat list) - PRIVACY ENFORCED
 // @access  Private
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const currentUserId = req.user._id;
     
-    // Get all users except current user
-    const users = await User.find({ _id: { $ne: currentUserId } })
-      .select('username email profilePicture isOnline lastSeen status')
-      .sort({ username: 1 });
+    // Get only friends - privacy enforced
+    const friends = await FriendRequest.getUserFriends(currentUserId);
 
     res.json({
       success: true,
-      users
+      users: friends // Only return friends, not all users
     });
   } catch (error) {
-    console.error('Get users error:', error);
+    console.error('Get friends error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error'

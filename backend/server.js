@@ -10,6 +10,7 @@ require('dotenv').config();
 const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/users');
 const messageRoutes = require('./src/routes/messages');
+const friendRoutes = require('./src/routes/friends');
 const { authenticateSocket, handleConnection } = require('./src/socket/socketHandlers');
 
 const app = express();
@@ -89,6 +90,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/friends', friendRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
 
 // -----------------------------

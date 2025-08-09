@@ -1,0 +1,387 @@
+/* Friend Manager Overlay */
+.friend-manager-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.friend-manager {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.friend-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.friend-manager-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #666;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background: #f1f3f4;
+}
+
+/* Messages */
+.error-message, .success-message {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  background: #fee;
+  color: #c53030;
+  border-bottom: 1px solid #fed7d7;
+}
+
+.success-message {
+  background: #f0fff4;
+  color: #38a169;
+  border-bottom: 1px solid #c6f6d5;
+}
+
+.error-message button, .success-message button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+.error-message button:hover, .success-message button:hover {
+  opacity: 1;
+}
+
+/* Tabs */
+.friend-tabs {
+  display: flex;
+  border-bottom: 1px solid #e1e5e9;
+  background: #f8f9fa;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: white;
+}
+
+/* Content */
+.friend-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+  color: #666;
+}
+
+.empty-state p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Friends List */
+.friends-list, .requests-list {
+  padding: 0 16px;
+}
+
+.friend-item, .request-item, .search-result-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: background-color 0.2s;
+}
+
+.friend-item:hover, .request-item:hover, .search-result-item:hover {
+  background: #e9ecef;
+}
+
+/* Avatars */
+.friend-avatar, .request-avatar, .search-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+/* Info Sections */
+.friend-info, .request-info, .search-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.friend-info h4, .request-info h4, .search-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.status.online {
+  background: #c6f6d5;
+  color: #38a169;
+}
+
+.status.offline {
+  background: #e2e8f0;
+  color: #718096;
+}
+
+.request-message {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.request-time {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.request-status {
+  font-size: 0.8rem;
+  color: #ed8936;
+  font-weight: 500;
+}
+
+.search-email {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Actions */
+.friend-actions, .request-actions, .search-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.chat-btn, .remove-btn, .accept-btn, .decline-btn, .send-request-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-btn {
+  background: #667eea;
+  color: white;
+}
+
+.chat-btn:hover {
+  background: #5a67d8;
+}
+
+.remove-btn, .decline-btn {
+  background: #e53e3e;
+  color: white;
+}
+
+.remove-btn:hover, .decline-btn:hover {
+  background: #c53030;
+}
+
+.accept-btn, .send-request-btn {
+  background: #38a169;
+  color: white;
+}
+
+.accept-btn:hover, .send-request-btn:hover {
+  background: #2f855a;
+}
+
+/* Status Badges */
+.status-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.status-badge.sent {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.status-badge.received {
+  background: #fef5e7;
+  color: #dd6b20;
+}
+
+.status-badge.friends {
+  background: #c6f6d5;
+  color: #38a169;
+}
+
+/* Search Section */
+.search-section {
+  padding: 0 16px;
+}
+
+.search-input-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #667eea;
+}
+
+.search-btn {
+  padding: 10px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background: #5a67d8;
+}
+
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .friend-manager-overlay {
+    padding: 10px;
+  }
+  
+  .friend-manager {
+    max-height: 90vh;
+  }
+  
+  .friend-manager-header {
+    padding: 16px 20px;
+  }
+  
+  .friend-manager-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .tab-btn {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+  }
+  
+  .friend-item, .request-item, .search-result-item {
+    padding: 10px 12px;
+  }
+  
+  .friend-avatar, .request-avatar, .search-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .friend-actions, .request-actions, .search-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .chat-btn, .remove-btn, .accept-btn, .decline-btn, .send-request-btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+}
