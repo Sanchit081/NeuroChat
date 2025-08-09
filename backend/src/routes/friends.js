@@ -27,7 +27,7 @@ router.post('/search-by-email', authenticateToken, async (req, res) => {
     }
     
     // Don't allow adding yourself
-    if (user._id.toString() === req.user.userId) {
+    if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({ 
         success: false, 
         message: 'You cannot add yourself as a friend' 
@@ -37,8 +37,8 @@ router.post('/search-by-email', authenticateToken, async (req, res) => {
     // Check if already friends or request exists
     const existingRelation = await FriendRequest.findOne({
       $or: [
-        { sender: req.user.userId, recipient: user._id },
-        { sender: user._id, recipient: req.user.userId }
+        { sender: req.user._id, recipient: user._id },
+        { sender: user._id, recipient: req.user._id }
       ]
     });
     
@@ -47,7 +47,7 @@ router.post('/search-by-email', authenticateToken, async (req, res) => {
       if (existingRelation.status === 'accepted') {
         relationshipStatus = 'friends';
       } else if (existingRelation.status === 'pending') {
-        relationshipStatus = existingRelation.sender.toString() === req.user.userId ? 'sent' : 'received';
+        relationshipStatus = existingRelation.sender.toString() === req.user._id.toString() ? 'sent' : 'received';
       } else if (existingRelation.status === 'blocked') {
         relationshipStatus = 'blocked';
       }
@@ -72,7 +72,8 @@ router.post('/search-by-email', authenticateToken, async (req, res) => {
 // Get user's friends
 router.get('/friends', authenticateToken, async (req, res) => {
   try {
-    const friends = await FriendRequest.getUserFriends(req.user.userId);
+    const userId = req.user._id.toString();
+    const friends = await FriendRequest.getUserFriends(userId);
     res.json({ success: true, friends });
   } catch (error) {
     console.error('Get friends error:', error);
@@ -84,7 +85,7 @@ router.get('/friends', authenticateToken, async (req, res) => {
 router.get('/requests/received', authenticateToken, async (req, res) => {
   try {
     const requests = await FriendRequest.find({
-      recipient: req.user.userId,
+      recipient: req.user._id,
       status: 'pending'
     }).populate('sender', 'username profilePicture')
       .sort({ createdAt: -1 });
@@ -100,7 +101,7 @@ router.get('/requests/received', authenticateToken, async (req, res) => {
 router.get('/requests/sent', authenticateToken, async (req, res) => {
   try {
     const requests = await FriendRequest.find({
-      sender: req.user.userId,
+      sender: req.user._id,
       status: 'pending'
     }).populate('recipient', 'username profilePicture')
       .sort({ createdAt: -1 });
@@ -116,7 +117,7 @@ router.get('/requests/sent', authenticateToken, async (req, res) => {
 router.post('/request', authenticateToken, async (req, res) => {
   try {
     const { recipientId, email, message = '' } = req.body;
-    const senderId = req.user.userId;
+    const senderId = req.user._id.toString();
     let recipient;
 
     // Find recipient by ID or email
@@ -186,7 +187,7 @@ router.post('/request', authenticateToken, async (req, res) => {
 router.post('/request/:requestId/accept', authenticateToken, async (req, res) => {
   try {
     const { requestId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user._id.toString();
 
     const friendRequest = await FriendRequest.findOne({
       _id: requestId,
@@ -216,7 +217,7 @@ router.post('/request/:requestId/accept', authenticateToken, async (req, res) =>
 router.post('/request/:requestId/decline', authenticateToken, async (req, res) => {
   try {
     const { requestId } = req.params;
-    const userId = req.user.userId;
+    const userId = req.user._id.toString();
 
     const friendRequest = await FriendRequest.findOne({
       _id: requestId,
@@ -245,8 +246,7 @@ router.post('/request/:requestId/decline', authenticateToken, async (req, res) =
 router.delete('/friend/:friendId', authenticateToken, async (req, res) => {
   try {
     const { friendId } = req.params;
-    const userId = req.user.userId;
-
+    const userId = req.user._id.toString();
     const friendship = await FriendRequest.findOne({
       $or: [
         { sender: userId, recipient: friendId, status: 'accepted' },
@@ -274,7 +274,7 @@ router.delete('/friend/:friendId', authenticateToken, async (req, res) => {
 router.get('/search', authenticateToken, async (req, res) => {
   try {
     const { query } = req.query;
-    const userId = req.user.userId;
+    const userId = req.user._id.toString();
 
     if (!query || query.trim().length < 2) {
       return res.status(400).json({ success: false, message: 'Search query must be at least 2 characters' });
