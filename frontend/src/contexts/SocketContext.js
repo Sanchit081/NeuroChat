@@ -52,6 +52,14 @@ export const SocketProvider = ({ children }) => {
         setSocket(newSocket);
       });
 
+      newSocket.on('roomJoined', (data) => {
+        console.log('🏠 Successfully joined conversation room:', data.roomId);
+      });
+
+      newSocket.on('messageError', (error) => {
+        console.error('❌ Message error:', error);
+      });
+
       newSocket.on('disconnect', (reason) => {
         console.log('❌ Disconnected from Socket.io server:', reason);
         if (reason === 'io server disconnect') {
@@ -87,7 +95,20 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('newMessage', (message) => {
-        setMessages(prev => [...prev, message]);
+        console.log('📨 Received new message:', {
+          messageId: message._id,
+          sender: message.sender?.username,
+          content: message.content?.substring(0, 50) + '...'
+        });
+        setMessages(prev => {
+          // Avoid duplicate messages
+          const exists = prev.find(msg => msg._id === message._id);
+          if (exists) {
+            console.log('⚠️ Duplicate message detected, skipping');
+            return prev;
+          }
+          return [...prev, message];
+        });
       });
 
       newSocket.on('messageDelivered', (data) => {

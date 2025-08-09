@@ -84,7 +84,10 @@ const handleConnection = (io) => {
       const { recipientId } = data;
       const roomId = [socket.userId, recipientId].sort().join('-');
       socket.join(roomId);
-      console.log(`User ${socket.user.username} joined conversation room: ${roomId}`);
+      console.log(`✅ User ${socket.user.username} joined conversation room: ${roomId}`);
+      
+      // Confirm room join to client
+      socket.emit('roomJoined', { roomId, recipientId });
     });
 
     // Handle leaving a conversation room
@@ -129,7 +132,20 @@ const handleConnection = (io) => {
 
         // Send to conversation room
         const roomId = [socket.userId, recipientId].sort().join('-');
+        console.log(`📤 Sending message to room ${roomId}:`, {
+          messageId: message._id,
+          sender: message.sender.username,
+          recipient: message.recipient.username,
+          content: message.content.substring(0, 50) + '...'
+        });
         io.to(roomId).emit('newMessage', message);
+        
+        // Also send directly to both users as fallback
+        socket.emit('newMessage', message);
+        if (connectedUsers.has(recipientId)) {
+          const recipientSocket = connectedUsers.get(recipientId);
+          io.to(recipientSocket.socketId).emit('newMessage', message);
+        }
 
         // If recipient is online, mark as delivered
         if (connectedUsers.has(recipientId)) {
