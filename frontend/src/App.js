@@ -46,7 +46,10 @@ const PublicRoute = ({ children }) => {
 const HomeRoute = () => {
   const { user, loading } = useAuth();
   
+  console.log('🏠 HomeRoute - user:', user, 'loading:', loading);
+  
   if (loading) {
+    console.log('🔄 HomeRoute - showing loading...');
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
@@ -55,7 +58,13 @@ const HomeRoute = () => {
     );
   }
   
-  return user ? <Navigate to="/chat" /> : <Home />;
+  if (user) {
+    console.log('👤 HomeRoute - user authenticated, redirecting to chat');
+    return <Navigate to="/chat" />;
+  }
+  
+  console.log('🏠 HomeRoute - no user, showing Home page');
+  return <Home />;
 };
 
 function App() {

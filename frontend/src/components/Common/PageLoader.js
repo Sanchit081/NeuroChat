@@ -20,15 +20,15 @@ const PageLoader = ({ onLoadingComplete }) => {
       setCurrentQuote((prev) => (prev + 1) % quotes.length);
     }, 2000);
 
-    // Auto-hide loader after 4 seconds
+    // Auto-hide loader after 3 seconds
     const hideTimer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(() => {
         if (onLoadingComplete) {
           onLoadingComplete();
         }
-      }, 500); // Wait for fade out animation
-    }, 4000);
+      }, 300); // Wait for fade out animation
+    }, 3000);
 
     return () => {
       clearInterval(quoteInterval);

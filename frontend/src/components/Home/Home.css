@@ -47,10 +47,30 @@
 }
 
 .logo-text {
-  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  background: linear-gradient(
+    45deg,
+    #ffffff 0%,
+    #4ecdc4 25%,
+    #45b7d1 50%,
+    #ffeaa7 75%,
+    #ffffff 100%
+  );
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: logoLights 3s ease-in-out infinite;
+}
+
+@keyframes logoLights {
+  0%, 100% { 
+    background-position: 0% 50%;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  }
+  50% { 
+    background-position: 100% 50%;
+    filter: drop-shadow(0 0 15px rgba(78, 205, 196, 0.5));
+  }
 }
 
 @keyframes float {
@@ -195,13 +215,54 @@
   padding: 8px 20px;
   border-radius: 25px;
   margin-bottom: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  animation: glow 2s ease-in-out infinite alternate;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  animation: badgeLights 4s ease-in-out infinite;
 }
 
-@keyframes glow {
-  from { box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
-  to { box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+.hero-badge::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    #ff6b6b 0%,
+    #4ecdc4 25%,
+    #45b7d1 50%,
+    #ffeaa7 75%,
+    #ff6b6b 100%
+  );
+  background-size: 300% 300%;
+  border-radius: 25px;
+  z-index: -1;
+  animation: badgeLights 4s ease-in-out infinite;
+}
+
+@keyframes badgeLights {
+  0% { 
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+  }
+  25% { 
+    background-position: 100% 50%;
+    box-shadow: 0 0 25px rgba(78, 205, 196, 0.5);
+  }
+  50% { 
+    background-position: 100% 100%;
+    box-shadow: 0 0 30px rgba(69, 183, 209, 0.6);
+  }
+  75% { 
+    background-position: 0% 100%;
+    box-shadow: 0 0 25px rgba(255, 234, 167, 0.5);
+  }
+  100% { 
+    background-position: 0% 50%;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+  }
 }
 
 .badge-text {
@@ -220,16 +281,74 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #ffffff 0%, #e0e0ff 50%, #ffffff 100%);
+  background: linear-gradient(
+    45deg,
+    #ff6b6b 0%,
+    #4ecdc4 12.5%,
+    #45b7d1 25%,
+    #96ceb4 37.5%,
+    #ffeaa7 50%,
+    #dda0dd 62.5%,
+    #98d8c8 75%,
+    #f7dc6f 87.5%,
+    #ff6b6b 100%
+  );
+  background-size: 400% 400%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 3s ease-in-out infinite;
+  animation: reflectingLights 4s ease-in-out infinite;
+  position: relative;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 }
 
-@keyframes shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.gradient-text::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 107, 107, 0.3) 0%,
+    rgba(78, 205, 196, 0.3) 12.5%,
+    rgba(69, 183, 209, 0.3) 25%,
+    rgba(150, 206, 180, 0.3) 37.5%,
+    rgba(255, 234, 167, 0.3) 50%,
+    rgba(221, 160, 221, 0.3) 62.5%,
+    rgba(152, 216, 200, 0.3) 75%,
+    rgba(247, 220, 111, 0.3) 87.5%,
+    rgba(255, 107, 107, 0.3) 100%
+  );
+  background-size: 400% 400%;
+  animation: reflectingLights 4s ease-in-out infinite;
+  filter: blur(20px);
+  z-index: -1;
+  border-radius: 20px;
+}
+
+@keyframes reflectingLights {
+  0% { 
+    background-position: 0% 50%;
+    filter: hue-rotate(0deg) brightness(1.2);
+  }
+  25% { 
+    background-position: 100% 50%;
+    filter: hue-rotate(90deg) brightness(1.4);
+  }
+  50% { 
+    background-position: 100% 100%;
+    filter: hue-rotate(180deg) brightness(1.6);
+  }
+  75% { 
+    background-position: 0% 100%;
+    filter: hue-rotate(270deg) brightness(1.4);
+  }
+  100% { 
+    background-position: 0% 50%;
+    filter: hue-rotate(360deg) brightness(1.2);
+  }
 }
 
 @keyframes slideInUp {
@@ -313,14 +432,66 @@
 }
 
 .cta-button.primary {
-  background: linear-gradient(135deg, #ffffff, #f0f0f0);
-  color: #667eea;
+  background: linear-gradient(
+    45deg,
+    #ffffff 0%,
+    #4ecdc4 25%,
+    #45b7d1 50%,
+    #ffeaa7 75%,
+    #ffffff 100%
+  );
+  background-size: 300% 300%;
+  color: #2c3e50;
   box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+  animation: buttonLights 5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button.primary::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 107, 107, 0.4) 0%,
+    rgba(78, 205, 196, 0.4) 25%,
+    rgba(69, 183, 209, 0.4) 50%,
+    rgba(255, 234, 167, 0.4) 75%,
+    rgba(255, 107, 107, 0.4) 100%
+  );
+  background-size: 300% 300%;
+  animation: buttonLights 5s ease-in-out infinite;
+  border-radius: 50px;
+  z-index: -1;
+  filter: blur(10px);
 }
 
 .cta-button.primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6);
+  animation-duration: 2s;
+}
+
+@keyframes buttonLights {
+  0% { 
+    background-position: 0% 50%;
+  }
+  25% { 
+    background-position: 100% 50%;
+  }
+  50% { 
+    background-position: 100% 100%;
+  }
+  75% { 
+    background-position: 0% 100%;
+  }
+  100% { 
+    background-position: 0% 50%;
+  }
 }
 
 .cta-button.secondary {

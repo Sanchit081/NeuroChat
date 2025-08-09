@@ -8,6 +8,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('🏠 Home component mounted successfully!');
     // Trigger animations on component mount
     setTimeout(() => setAnimationClass('animate-in'), 100);
   }, []);
