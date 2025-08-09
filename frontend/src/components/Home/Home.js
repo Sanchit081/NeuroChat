@@ -46,11 +46,11 @@ const Home = () => {
       {/* Navbar */}
       <nav className="navbar">
         <div className="nav-content">
-          <div className="nav-logo">
-            <div className="logo-icon">💬</div>
-            <span className="logo-text">NeuroChat</span>
+          <div className="nav-left">
+            <div className="logo">
+              <span className="logo-text">NeuroChat</span>
+            </div>
           </div>
-          
           <div className="nav-menu">
             <button 
               className={`hamburger ${menuOpen ? 'active' : ''}`}
@@ -81,72 +81,34 @@ const Home = () => {
           </div>
           
           <h1 className="hero-title">
-            Welcome to
-            <span className="gradient-text"> NeuroChat</span>
+            Simple. Secure. Reliable messaging.
           </h1>
           
           <p className="hero-subtitle">
-            Experience the future of messaging with real-time conversations, 
-            end-to-end encryption, and seamless connectivity.
+            Connect with friends and family through fast, secure messaging. 
+            Start conversations that matter with NeuroChat.
           </p>
-          
-          <div className="hero-features">
-            <div className="feature-item">
-              <div className="feature-icon">⚡</div>
-              <span>Real-time Messaging</span>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">🔒</div>
-              <span>End-to-end Encrypted</span>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">🌐</div>
-              <span>Cross-platform</span>
-            </div>
-          </div>
           
           <div className="hero-actions">
             <button className="cta-button primary" onClick={handleStartChatting}>
               Start Chatting
             </button>
-            
-            <button className="cta-button secondary" onClick={handleLogin}>
-              Sign In
-            </button>
           </div>
           
-          {/* Features Section - Moved below CTA */}
-          <section className="features">
-            <div className="features-grid">
-              <div className="feature-card">
-                <span className="feature-icon">⚡</span>
-                <h3>Real-time</h3>
-                <p>Instant messaging with live updates</p>
-              </div>
-              
-              <div className="feature-card">
-                <span className="feature-icon">🔒</span>
-                <h3>Secure</h3>
-                <p>End-to-end encrypted conversations</p>
-              </div>
-              
-              <div className="feature-card">
-                <span className="feature-icon">📱</span>
-                <h3>Mobile-first</h3>
-                <p>Optimized for all devices</p>
-              </div>
+          <div className="hero-features">
+            <div className="feature-item">
+              <span className="feature-icon">💬</span>
+              <span>Simple</span>
             </div>
-          </section>
-        </div>
-        
-        {/* Animated Background Elements */}
-        <div className="hero-background">
-          <div className="floating-bubble bubble-1"></div>
-          <div className="floating-bubble bubble-2"></div>
-          <div className="floating-bubble bubble-3"></div>
-          <div className="floating-bubble bubble-4"></div>
-          <div className="floating-bubble bubble-5"></div>
-          <div className="floating-bubble bubble-6"></div>
+            <div className="feature-item">
+              <span className="feature-icon">🔒</span>
+              <span>Secure</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">⚡</span>
+              <span>Fast</span>
+            </div>
+          </div>
         </div>
       </main>
 

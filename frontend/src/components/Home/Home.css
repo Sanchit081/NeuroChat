@@ -1,11 +1,28 @@
 /* Home Container */
 .home-container {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #1f2937;
+  line-height: 1.6;
   position: relative;
   overflow-x: hidden;
+}
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  color: #1f2937;
+  line-height: 1.6;
 }
 
 /* Navbar */
@@ -177,12 +194,13 @@
 
 /* Hero Section */
 .hero-section {
-  min-height: 100vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 100px 20px 50px;
   position: relative;
+  padding: 120px 20px 60px;
+  background: #ffffff;
 }
 
 .hero-content {
@@ -202,14 +220,14 @@
 /* Hero Badge */
 .hero-badge {
   display: inline-block;
-  background: rgba(37, 211, 102, 0.1);
-  color: #25d366;
-  padding: 6px 16px;
+  padding: 8px 16px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 20px;
-  margin-bottom: 24px;
+  color: #6366f1;
+  font-size: 0.9rem;
   font-weight: 500;
-  font-size: 0.85rem;
-  border: 1px solid rgba(37, 211, 102, 0.2);
+  margin-bottom: 32px;
 }
 
 .hero-badge::before {
@@ -263,12 +281,11 @@
 }
 
 .hero-title {
-  font-size: 3.2rem;
-  font-weight: 300;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  font-size: 3rem;
+  font-weight: 600;
   color: #1f2937;
-  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+  line-height: 1.2;
 }
 
 .gradient-text {
@@ -356,9 +373,9 @@
 .hero-subtitle {
   font-size: 1.1rem;
   color: #6b7280;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
   line-height: 1.6;
-  max-width: 600px;
+  max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   font-weight: 400;
@@ -472,9 +489,9 @@
 }
 
 .cta-button.primary {
-  background: #25d366;
+  background: #6366f1;
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
 }
 
 .cta-button.primary::before {
@@ -500,8 +517,9 @@
 }
 
 .cta-button.primary:hover {
-  background: #22c55e;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  background: #5855eb;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
 }
 
 @keyframes buttonLights {
