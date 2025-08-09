@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './Home.css';
 
 const Home = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     console.log('🏠 Home component mounted successfully!');
@@ -23,6 +25,16 @@ const Home = () => {
 
   const handleSignup = () => {
     navigate('/register');
+  };
+
+  const handleStartChatting = () => {
+    if (user) {
+      // User is already logged in, go to chat
+      navigate('/chat');
+    } else {
+      // User not logged in, go to signup
+      navigate('/register');
+    }
   };
 
   return (
@@ -93,7 +105,7 @@ const Home = () => {
           </div>
           
           <div className="hero-actions">
-            <button className="cta-button primary" onClick={handleSignup}>
+            <button className="cta-button primary" onClick={handleStartChatting}>
               <span className="cta-text">Start Chatting</span>
               <div className="cta-animation">
                 <div className="pulse-ring"></div>

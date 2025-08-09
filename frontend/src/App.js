@@ -42,11 +42,11 @@ const PublicRoute = ({ children }) => {
   return user ? <Navigate to="/chat" /> : children;
 };
 
-// Home Route Component (show home if not authenticated, redirect to chat if authenticated)
+// Home Route Component (always show home page after loader)
 const HomeRoute = () => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   
-  console.log('🏠 HomeRoute - user:', user, 'loading:', loading);
+  console.log('🏠 HomeRoute - loading:', loading);
   
   if (loading) {
     console.log('🔄 HomeRoute - showing loading...');
@@ -58,12 +58,7 @@ const HomeRoute = () => {
     );
   }
   
-  if (user) {
-    console.log('👤 HomeRoute - user authenticated, redirecting to chat');
-    return <Navigate to="/chat" />;
-  }
-  
-  console.log('🏠 HomeRoute - no user, showing Home page');
+  console.log('🏠 HomeRoute - showing Home page');
   return <Home />;
 };
 
