@@ -131,11 +131,26 @@ const ChatWindow = ({ currentUser, selectedUser, messages, onlineUsers }) => {
   };
 
   const groupMessagesByDate = (messages) => {
+    // Filter messages for current conversation
+    const conversationMessages = messages.filter(message => {
+      return (
+        (message.sender._id === currentUser._id && message.recipient._id === selectedUser._id) ||
+        (message.sender._id === selectedUser._id && message.recipient._id === currentUser._id)
+      );
+    });
+
+    console.log('💬 Message filtering:', {
+      totalMessages: messages.length,
+      conversationMessages: conversationMessages.length,
+      currentUser: currentUser._id,
+      selectedUser: selectedUser._id
+    });
+
     const groups = [];
     let currentDate = null;
     let currentGroup = [];
 
-    messages.forEach(message => {
+    conversationMessages.forEach(message => {
       const messageDate = new Date(message.createdAt).toDateString();
       
       if (messageDate !== currentDate) {
