@@ -107,18 +107,36 @@ const Home = () => {
           
           <div className="hero-actions">
             <button className="cta-button primary" onClick={handleStartChatting}>
-              <span className="cta-text">Start Chatting</span>
-              <div className="cta-animation">
-                <div className="pulse-ring"></div>
-                <div className="pulse-ring delay-1"></div>
-                <div className="pulse-ring delay-2"></div>
-              </div>
+              Start Chatting
             </button>
             
             <button className="cta-button secondary" onClick={handleLogin}>
-              <span className="cta-text">Sign In</span>
+              Sign In
             </button>
           </div>
+          
+          {/* Features Section - Moved below CTA */}
+          <section className="features">
+            <div className="features-grid">
+              <div className="feature-card">
+                <span className="feature-icon">⚡</span>
+                <h3>Real-time</h3>
+                <p>Instant messaging with live updates</p>
+              </div>
+              
+              <div className="feature-card">
+                <span className="feature-icon">🔒</span>
+                <h3>Secure</h3>
+                <p>End-to-end encrypted conversations</p>
+              </div>
+              
+              <div className="feature-card">
+                <span className="feature-icon">📱</span>
+                <h3>Mobile-first</h3>
+                <p>Optimized for all devices</p>
+              </div>
+            </div>
+          </section>
         </div>
         
         {/* Animated Background Elements */}
@@ -132,28 +150,7 @@ const Home = () => {
         </div>
       </main>
 
-      {/* Features Section */}
-      <section className="features">
-        <div className="features-grid">
-          <div className="feature-card">
-            <span className="feature-icon">⚡</span>
-            <h3>Real-time Messaging</h3>
-            <p>Instant message delivery with live typing indicators and read receipts.</p>
-          </div>
-          
-          <div className="feature-card">
-            <span className="feature-icon">🔒</span>
-            <h3>End-to-end Encrypted</h3>
-            <p>Your conversations are secure with advanced encryption technology.</p>
-          </div>
-          
-          <div className="feature-card">
-            <span className="feature-icon">🌐</span>
-            <h3>Cross-platform</h3>
-            <p>Access your chats seamlessly across all your devices and platforms.</p>
-          </div>
-        </div>
-      </section>
+
 
       {/* Footer */}
       <footer className="footer">
