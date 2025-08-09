@@ -52,6 +52,11 @@ const Register = () => {
       <div className="auth-card">
         <div className="auth-header">
           <h1>NeuroChat</h1>
+          <div className="branding">
+            <span className="by-text">By-</span>
+            <span className="sanchitverse-text">SanchitVerse</span>
+            <span className="lightning-effect">⚡</span>
+          </div>
           <p>Create your account to start secure chatting!</p>
         </div>
 

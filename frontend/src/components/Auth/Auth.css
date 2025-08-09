@@ -50,6 +50,60 @@
   margin: 0;
 }
 
+/* SanchitVerse Branding with Lightning Effect */
+.branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.by-text {
+  color: #666;
+  font-style: italic;
+}
+
+.sanchitverse-text {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+}
+
+.lightning-effect {
+  font-size: 1.2rem;
+  color: #ffd700;
+  animation: lightning 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px #ffd700);
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes lightning {
+  0%, 50%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%, 75% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
