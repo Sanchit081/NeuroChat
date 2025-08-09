@@ -23,7 +23,9 @@ let io = null;
 const CLIENT_URLS = [
   process.env.CLIENT_URL,                  // From Render env vars
   'https://neuro-chat-rho.vercel.app',     // Production Vercel domain
-  'http://localhost:3000'                  // Local dev
+  'https://neurochat-cozz.onrender.com',   // Backend domain (for health checks)
+  'http://localhost:3000',                 // Local dev
+  'http://localhost:10000'                 // Local backend dev
 ].filter(Boolean);
 
 // -----------------------------
@@ -127,14 +129,21 @@ function createServerInstance() {
   const socket = socketIo(s, {
     cors: {
       origin: (origin, callback) => {
+        console.log(`🔍 Socket.io CORS check - Origin: ${origin || 'null'}`);
         if (!origin || CLIENT_URLS.includes(origin)) {
+          console.log(`✅ Socket.io CORS allowed: ${origin || 'null'}`);
           return callback(null, true);
         }
-        return callback(new Error(`❌ Not allowed by CORS: ${origin}`));
+        console.log(`❌ Socket.io CORS blocked: ${origin}`);
+        return callback(new Error(`Not allowed by CORS: ${origin}`));
       },
       credentials: true,
       methods: ['GET', 'POST'],
-    }
+    },
+    allowEIO3: true,
+    transports: ['websocket', 'polling'],
+    pingTimeout: 60000,
+    pingInterval: 25000
   });
 
   socket.use(authenticateSocket);

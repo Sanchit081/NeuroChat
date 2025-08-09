@@ -22,21 +22,31 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (user && token) {
       const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:5000';
+      console.log('🔌 Attempting to connect to Socket.io server:', SOCKET_URL);
       
       const newSocket = io(SOCKET_URL, {
         auth: {
           token: token
         },
-        transports: ['websocket', 'polling']
+        transports: ['websocket', 'polling'],
+        timeout: 20000,
+        forceNew: true,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
       });
 
       newSocket.on('connect', () => {
-        console.log('Connected to server');
+        console.log('✅ Connected to Socket.io server');
         setSocket(newSocket);
       });
 
-      newSocket.on('disconnect', () => {
-        console.log('Disconnected from server');
+      newSocket.on('disconnect', (reason) => {
+        console.log('❌ Disconnected from Socket.io server:', reason);
+      });
+
+      newSocket.on('connect_error', (error) => {
+        console.error('🚫 Socket.io connection error:', error.message);
       });
 
       newSocket.on('onlineUsers', (users) => {
